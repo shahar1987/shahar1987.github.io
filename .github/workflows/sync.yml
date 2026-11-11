@@ -1,0 +1,30 @@
+name: Publish public copy
+# The site repos are private. This copies only what the browser needs, shortens youth names, and publishes.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with: { repository: shahar1987/ttc-club-board, path: src/ttc-club-board, ssh-key: "${{ secrets.KEY_BOARD }}", persist-credentials: false }
+      - uses: actions/checkout@v5
+        with: { repository: shahar1987/ttc-uniform-sizes, path: src/ttc-uniform-sizes, ssh-key: "${{ secrets.KEY_UNIFORM }}", persist-credentials: false }
+      - uses: actions/checkout@v5
+        with: { repository: shahar1987/ttc-mvh-tournaments, path: src/ttc-mvh-tournaments, ssh-key: "${{ secrets.KEY_TOURN }}", persist-credentials: false }
+      - run: python3 tools/publish.py src && rm -rf src
+      - name: Commit if anything changed
+        run: |
+          git add -A
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git -c user.name="publish" -c user.email="publish@users.noreply.github.com" commit -qm "עדכון העותק הציבורי"
+          git push -q

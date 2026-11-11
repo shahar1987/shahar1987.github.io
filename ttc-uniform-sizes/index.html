@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מידות לתלבושת הליגה · טניס שולחן מבואות החרמון</title>
+<meta name="description" content="ממלאים את שם השחקן ואת מידות החולצה והמכנס. לוקח דקה.">
+<meta property="og:title" content="מידות לתלבושת הליגה 🏓">
+<meta property="og:description" content="מועדון טניס שולחן מבואות החרמון ע&quot;ש רוני גלבוע · ממלאים שם ומידות, וזהו.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light only">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23E8731A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
+<style>
+/* White on white: white page, white or clear buttons outlined by hairlines; court blue marks what is selected, ball orange is the only warm accent. */
+:root{
+  --bg:#FFFFFF; --ink:#111A27; --muted:#6B7686; --line:#E3E7ED; --line-strong:#CBD2DC; --hover:#F7F9FB;
+  --court:#1D4E89; --court-tint:#EEF4FB; --ball:#E8731A; --ok:#1F8A4C; --ok-tint:#EDF7F1; --no:#C2412F; --no-tint:#FCF1EF;
+  --glass:rgba(255,255,255,.84);
+  --font:-apple-system,BlinkMacSystemFont,"Assistant","Segoe UI",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --spring:cubic-bezier(.2,.8,.2,1);
+  --spring:linear(0,.06,.25 9%,.53 15%,.79 22%,.94 30%,1.02 40%,1.03 48%,1.01 62%,1);
+  --bounce:linear(0,.18 6%,.55 13%,.9 21%,1.08 29%,1.12 34%,1.08 41%,1 51%,.98 60%,1 75%,1);
+  --shadow:0 1px 2px rgba(17,26,39,.03),0 10px 30px rgba(17,26,39,.05);
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.45 var(--font);min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+[hidden]{display:none!important}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid transparent;transition:border-color .2s}
+.top.scrolled{border-bottom-color:var(--line)}
+.top-in{max-width:760px;margin:0 auto;height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-inline:max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-left,0px))}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;min-width:0}
+.brand i{width:14px;height:14px;border-radius:50%;background:var(--ball);flex:none}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .35s var(--spring)}
+.top.scrolled .brand span,.coach-on .brand span{opacity:1;transform:none}
+.pill{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:6px 15px;font-weight:600;font-size:15px;transition:transform .12s var(--ease),background .2s}
+.pill:active{transform:scale(.94);background:var(--hover)}
+
+main{max-width:640px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-left,0px));padding-block:8px calc(150px + env(safe-area-inset-bottom,0px))}
+.hero{padding:14px 4px 20px}
+.club{color:var(--muted);font-size:15px;font-weight:600}
+h1{font-weight:800;font-size:clamp(32px,9vw,44px);line-height:1.05;letter-spacing:-.02em;margin:6px 0 10px;text-wrap:balance}
+.lead{margin:0;color:var(--muted);font-size:17px;max-width:34ch}
+
+.group{margin-top:24px}
+.ghead{display:flex;align-items:baseline;justify-content:space-between;padding:0 6px 8px;font-size:14px;font-weight:700;color:var(--muted)}
+.ghead .state{color:var(--ok);opacity:0;transform:scale(.6);transition:opacity .2s,transform .35s var(--bounce)}
+.group.ok .ghead .state{opacity:1;transform:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.field{display:flex;align-items:center;gap:12px;min-height:58px;padding:0 18px}
+.field + .field{border-top:1px solid var(--line);margin-inline-start:18px;padding-inline-start:0}
+.field label{width:96px;flex:none;font-weight:600}
+.field input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:18px;padding:16px 0}
+.field input::placeholder{color:var(--muted);opacity:.7}
+.card:focus-within{border-color:var(--court)}
+
+.sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:14px}
+@media (max-width:420px){.sizes{grid-template-columns:repeat(4,1fr)}}
+.size{height:56px;border:1px solid var(--line-strong);border-radius:14px;background:#fff;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;transition:transform .14s var(--ease),background .2s,border-color .2s,color .2s,box-shadow .25s}
+.size:active{transform:scale(.92);transition-duration:.08s}
+.size[aria-pressed=true]{border:2px solid var(--court);background:var(--court-tint);color:var(--court);box-shadow:0 4px 14px rgba(29,78,137,.14);animation:pop .45s var(--bounce)}
+.size.other{font-size:16px}
+@keyframes pop{0%{transform:scale(.9)}100%{transform:scale(1)}}
+.reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--spring)}
+.reveal.open{grid-template-rows:1fr}
+.reveal > div{overflow:hidden}
+.reveal input{display:block;width:calc(100% - 28px);margin:0 14px 14px;border:1px solid var(--line-strong);outline:none;background:#fff;border-radius:12px;padding:14px;font-size:17px}
+.reveal input:focus{border-color:var(--court)}
+
+.group.shake .card{animation:shake .45s var(--ease)}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.group.need .ghead{color:var(--no)}
+.group.need .card{border-color:var(--no)}
+.help{color:var(--muted);font-size:14px;text-align:center;margin:28px 0 0}
+
+/* bottom bar */
+.bar{position:fixed;inset-inline:0;bottom:0;z-index:20;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:1px solid var(--line)}
+.bar-in{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.prog{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--muted)}
+.dots{display:flex;gap:5px}
+.dots b{width:26px;height:5px;border-radius:3px;background:var(--line);transition:background .3s var(--ease),transform .35s var(--bounce)}
+.dots b.on{background:var(--ok);transform:scaleY(1.4)}
+.cta{height:56px;border:1.5px solid var(--court);border-radius:16px;background:#fff;color:var(--court);font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s var(--ease),background .2s,opacity .25s;box-shadow:0 6px 18px rgba(29,78,137,.12)}
+.cta:active{transform:scale(.97);background:var(--court-tint)}
+.cta.ready{background:var(--court-tint)}
+.cta.wait{opacity:.6}
+.spin{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(29,78,137,.25);border-top-color:var(--court);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{color:var(--no);font-weight:600;font-size:15px;text-align:center;margin:0}
+
+/* sheets */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;inset-inline:0;bottom:0;z-index:50;max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--line);border-bottom:0;border-radius:28px 28px 0 0;padding:10px max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));transform:translateY(105%);transition:transform .5s var(--spring);box-shadow:0 -12px 40px rgba(17,26,39,.10);max-height:92vh;overflow:auto}
+.sheet:not(.show){visibility:hidden;transition:transform .5s var(--spring),visibility 0s linear .5s}
+.sheet.show{transform:none;visibility:visible}
+.grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
+.sheet h2{font-weight:800;font-size:26px;letter-spacing:-.01em;margin:6px 0 6px;text-align:center}
+.sheet p{color:var(--muted);text-align:center;margin:0 0 18px}
+.check{width:84px;height:84px;margin:14px auto 8px;display:block}
+.check circle{fill:var(--ok-tint);stroke:var(--ok);stroke-width:3;transform-origin:center;transform:scale(0);transition:transform .55s var(--bounce)}
+.check path{fill:none;stroke:var(--ok);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;transition:stroke-dashoffset .4s var(--ease) .3s}
+.sheet.show .check circle{transform:scale(1)}
+.sheet.show .check path{stroke-dashoffset:0}
+.sum{border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin:0 0 18px}
+.sum div{display:flex;justify-content:space-between;padding:11px 0}
+.sum div + div{border-top:1px solid var(--line)}
+.sum dt{color:var(--muted)}.sum dd{margin:0;font-weight:700}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border:1px solid var(--line-strong);border-radius:16px;background:#fff;font-weight:700;font-size:17px;text-decoration:none;color:var(--ink);transition:transform .12s var(--ease),background .2s;padding:0 16px}
+.btn:active{transform:scale(.97);background:var(--hover)}
+.btn.primary{border:1.5px solid var(--court);color:var(--court)}
+.btn.primary:active{background:var(--court-tint)}
+.stack{display:flex;flex-direction:column;gap:10px}
+.pin{display:flex;justify-content:center;gap:18px;margin:6px 0 22px}
+.pin b{width:15px;height:15px;border-radius:50%;border:2px solid var(--line-strong);transition:background .15s,transform .3s var(--bounce),border-color .15s}
+.pin b.on{background:var(--court);border-color:var(--court);transform:scale(1.15)}
+.pin.bad{animation:shake .45s var(--ease)}
+.pin.bad b{border-color:var(--no)}
+.keypad{display:grid;grid-template-columns:repeat(3,78px);gap:14px 26px;justify-content:center}
+.keypad button{width:78px;height:78px;border-radius:50%;border:1px solid var(--line-strong);background:#fff;font-size:30px;font-weight:600;transition:transform .1s var(--ease),background .15s}
+.keypad button:active{transform:scale(.9);background:var(--court-tint)}
+.keypad .ghost{border-color:transparent;background:none}
+.close{display:block;margin:20px auto 0;border:0;background:none;color:var(--court);font-weight:600;font-size:17px;padding:8px 16px}
+
+/* coach dashboard */
+.coach{max-width:760px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-left,0px));padding-block:12px calc(40px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
+.coach h1{font-size:clamp(28px,7vw,38px);margin:4px 0 2px}
+.who{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:14px}
+.who button{border:0;background:none;color:var(--court);font-weight:600;padding:4px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:#fff;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:0}
+.tile span{color:var(--muted);font-size:14px;font-weight:600}
+.tile b{font-size:clamp(28px,8vw,40px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile.ok b{color:var(--ok)}.tile.no b{color:var(--no)}
+.meter{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:999px;background:var(--ok);transition:width .8s var(--spring)}
+.seg{display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:none;border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:8px 16px;font-weight:600;font-size:15px;white-space:nowrap;transition:transform .12s var(--ease),background .2s,border-color .2s,color .2s}
+.seg button:active{transform:scale(.95)}
+.seg button[aria-selected=true]{border-color:var(--court);background:var(--court-tint);color:var(--court)}
+.seg em{font-style:normal;font-variant-numeric:tabular-nums;margin-inline-start:6px;color:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow);overflow:hidden;animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ph h2{margin:0;font-size:18px;font-weight:800}
+.ph small{color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);min-height:56px}
+.row:first-child{border-top:0}
+.row .nm{flex:1;min-width:0}
+.idx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line-strong);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.arow .idx{order:-1}
+.row .nm b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm small{color:var(--muted);font-size:13px}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 10px;border:1px solid var(--line-strong);border-radius:9px;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;background:#fff}
+.badge{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+.badge.ok{background:var(--ok-tint);color:var(--ok)}.badge.no{background:var(--no-tint);color:var(--no)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.search{display:block;width:calc(100% - 32px);margin:12px 16px 4px;border:1px solid var(--line-strong);border-radius:12px;padding:11px 14px;background:#fff;outline:none}
+.search:focus{border-color:var(--court)}
+.otable{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.otable th{font-size:13px;color:var(--muted);font-weight:700;text-align:center;padding:10px 8px;border-bottom:1px solid var(--line)}
+.otable th:first-child,.otable td:first-child{text-align:right;padding-inline-start:16px}
+.otable td{padding:10px 8px;border-top:1px solid var(--line);text-align:center;font-weight:700}
+.otable tr.total td{background:var(--hover)}
+.cellbar{display:flex;align-items:center;gap:8px;justify-content:center}
+.cellbar i{display:inline-block;height:8px;border-radius:4px;background:var(--court);opacity:.25;min-width:2px}
+.arow{flex-wrap:wrap;row-gap:8px}
+.arow .nm{flex:1 1 100%}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.assign{border:1px solid var(--line-strong);border-radius:10px;background:#fff;padding:6px 8px;font-size:14px;max-width:150px}
+.mini{border:1px solid var(--line-strong);background:#fff;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--muted)}
+.mini.danger{border-color:var(--no);color:var(--no)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.actions{grid-template-columns:1fr}}
+.login{display:flex;flex-direction:column;gap:12px;padding:20px}
+.login input{border:1px solid var(--line-strong);border-radius:12px;padding:14px;background:#fff;outline:none;font-size:17px}
+.login input:focus{border-color:var(--court)}
+.login.edit{padding:0}
+.edit label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700;color:var(--muted)}
+.edit select{border:1px solid var(--line-strong);border-radius:12px;padding:13px 12px;background:#fff;font-size:17px;color:var(--ink)}
+.edsz{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row.tap{cursor:pointer;transition:background .15s}
+.row.tap:active{background:var(--hover)}
+.row.tap .go{color:var(--muted);font-size:18px}
+.mini.add{border-color:var(--court);color:var(--court);white-space:nowrap;flex:none}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:60;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:999px;padding:10px 18px;font-weight:600;transition:opacity .25s,transform .35s var(--spring);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+button:focus-visible,input:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
+.field input:focus-visible,.reveal input:focus-visible,.search:focus-visible,.login input:focus-visible{outline:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .sheet{transition:opacity .2s!important;transform:none;opacity:0;pointer-events:none}
+  .sheet.show{opacity:1;pointer-events:auto}
+  .check circle{transform:none}.check path{stroke-dashoffset:0}
+}
+@media (prefers-reduced-transparency: reduce){
+  .top,.bar,.scrim{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+</style>
+</head>
+<body>
+<header class="top" id="top"><div class="top-in">
+  <div class="brand"><i aria-hidden="true"></i><span id="brandTxt">מידות לתלבושת הליגה</span></div>
+  <button class="pill" id="coachBtn" type="button">מאמן</button>
+</div></header>
+
+<!-- parents -->
+<div id="parentView">
+<main>
+  <section class="hero">
+    <div class="club">מועדון טניס שולחן מבואות החרמון ע"ש רוני גלבוע</div>
+    <h1>מידות לתלבושת הליגה</h1>
+    <p class="lead">השנה כל שחקני הליגה מקבלים חולצה ומכנס של המועדון. ממלאים פעם אחת, לוקח דקה.</p>
+  </section>
+
+  <form id="f" novalidate>
+    <section class="group" id="gName">
+      <div class="ghead"><span>שם השחקן</span><span class="state">✓</span></div>
+      <div class="card">
+        <div class="field"><label for="first">שם פרטי</label><input id="first" type="text" autocomplete="off" maxlength="40" placeholder="לדוגמה: נועה" enterkeyhint="next"></div>
+        <div class="field"><label for="last">שם משפחה</label><input id="last" type="text" autocomplete="off" maxlength="40" placeholder="לדוגמה: כהן" enterkeyhint="done"></div>
+      </div>
+    </section>
+
+    <section class="group" id="gShirt">
+      <div class="ghead"><span id="shirtLbl">מידת חולצה</span><span class="state">✓</span></div>
+      <div class="card">
+        <div class="sizes" data-k="shirt" role="group" aria-labelledby="shirtLbl"></div>
+        <div class="reveal" id="shirtReveal"><div><input id="shirtOther" type="text" maxlength="20" placeholder="איזו מידה?" aria-label="מידת חולצה אחרת"></div></div>
+      </div>
+    </section>
+
+    <section class="group" id="gPants">
+      <div class="ghead"><span id="pantsLbl">מידת מכנס</span><span class="state">✓</span></div>
+      <div class="card">
+        <div class="sizes" data-k="pants" role="group" aria-labelledby="pantsLbl"></div>
+        <div class="reveal" id="pantsReveal"><div><input id="pantsOther" type="text" maxlength="20" placeholder="איזו מידה?" aria-label="מידת מכנס אחרת"></div></div>
+      </div>
+    </section>
+
+    <p class="help">שאלות? שחר, 050-4999149</p>
+  </form>
+</main>
+
+<div class="bar"><div class="bar-in">
+  <div class="prog"><div class="dots" aria-hidden="true"><b></b><b></b><b></b></div><span id="progTxt" aria-live="polite">נשארו 3 שלבים</span></div>
+  <p class="err" id="err" hidden></p>
+  <button class="cta" id="send" type="submit" form="f">שליחה</button>
+</div></div>
+</div>
+
+<!-- coach -->
+<section class="coach" id="coachView" hidden>
+  <div>
+    <div class="club">מועדון טניס שולחן מבואות החרמון · עונת 2026–27</div>
+    <h1>דשבורד מאמן</h1>
+  </div>
+
+  <div class="panel" id="loginBox" hidden>
+    <div class="ph"><h2>כניסה</h2><small>פעם אחת בכל מכשיר</small></div>
+    <form class="login" id="loginForm" novalidate>
+      <p style="margin:0;color:var(--muted)">אותו משתמש וסיסמה של אפליקציית הנוכחות.</p>
+      <input id="email" type="email" autocomplete="username" placeholder="אימייל" dir="ltr">
+      <input id="pass" type="password" autocomplete="current-password" placeholder="סיסמה" dir="ltr">
+      <p class="err" id="loginErr" hidden></p>
+      <button class="btn primary" id="loginBtn" type="submit">כניסה</button>
+    </form>
+  </div>
+
+  <div id="dash" hidden>
+    <div class="who"><span id="whoTxt"></span><button type="button" id="logout">התנתקות</button></div>
+    <div class="tiles" style="margin-top:12px">
+      <div class="tile ok"><span>מילאו</span><b id="tFilled">0</b></div>
+      <div class="tile no"><span>עוד לא</span><b id="tLeft">0</b></div>
+      <div class="tile"><span>מתוך</span><b id="tTotal">0</b></div>
+    </div>
+    <div class="meter" style="margin-top:12px" aria-hidden="true"><i id="meter"></i></div>
+    <p class="err" id="dashErr" hidden style="margin-top:12px"></p>
+
+    <div class="seg" role="tablist" style="margin-top:16px">
+      <button role="tab" type="button" data-tab="missing" aria-selected="true">עוד לא מילאו<em id="cMissing">0</em></button>
+      <button role="tab" type="button" data-tab="all" aria-selected="false">כל השחקנים<em id="cAll">0</em></button>
+      <button role="tab" type="button" data-tab="coaches" aria-selected="false">מאמנים<em id="cCoaches">0</em></button>
+      <button role="tab" type="button" data-tab="order" aria-selected="false">כמה להזמין</button>
+      <button role="tab" type="button" data-tab="answers" aria-selected="false">תשובות<em id="cAnswers">0</em></button>
+    </div>
+
+    <div class="panel" id="pane" style="margin-top:12px"></div>
+
+    <div class="actions" style="margin-top:16px">
+      <a class="btn primary" id="remind" href="#" target="_blank" rel="noopener">תזכורת בוואטסאפ</a>
+      <button class="btn" id="csv" type="button">הורדה לאקסל</button>
+      <a class="btn" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/edit" target="_blank" rel="noopener">גוגל שיטס</a>
+      <button class="btn" id="backToForm" type="button">חזרה לטופס</button>
+    </div>
+  </div>
+</section>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="doneSheet" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <svg class="check" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="40"/><path d="M25 43l11 11 23-24"/></svg>
+  <h2 id="doneTitle">תודה, קיבלנו!</h2>
+  <p>המידות נשמרו אצל שחר.</p>
+  <dl class="sum" id="sum"></dl>
+  <div class="stack"><button class="btn" id="again" type="button">מילוי לשחקן נוסף</button></div>
+</section>
+
+<section class="sheet" id="pinSheet" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <h2 id="pinTitle">כניסת מאמן</h2>
+  <p>הקש את הקוד</p>
+  <div class="pin" id="pin" aria-live="polite"><b></b><b></b><b></b><b></b></div>
+  <div class="keypad" id="keypad"></div>
+  <button class="close" type="button" data-close>ביטול</button>
+</section>
+
+<section class="sheet" id="editSheet" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <h2 id="editTitle">עריכת שחקן</h2>
+  <form class="login edit" id="editForm" novalidate>
+    <label>שם מלא<input id="edName" type="text" maxlength="60" autocomplete="off" placeholder="לדוגמה: נועה כהן"></label>
+    <label>קבוצה<input id="edGroup" type="text" maxlength="40" autocomplete="off" list="groupList" placeholder="לדוגמה: ליגה א' (M4)"></label>
+    <datalist id="groupList"></datalist>
+    <div class="edsz">
+      <label>חולצה<select id="edShirt"></select><input id="edShirtO" type="text" maxlength="20" placeholder="איזו מידה?" hidden></label>
+      <label>מכנס<select id="edPants"></select><input id="edPantsO" type="text" maxlength="20" placeholder="איזו מידה?" hidden></label>
+    </div>
+    <p class="err" id="edErr" hidden></p>
+    <button class="btn primary" id="edSave" type="submit">שמירה</button>
+    <button class="btn" id="edDel" type="button">הסרה מהרשימה</button>
+  </form>
+  <button class="close" type="button" data-close>ביטול</button>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="match.js"></script>
+<script>
+// ---------- shared ----------
+const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSc-ZfQ88s5y7a_7Kp4wlIaqqKke1uq3ZzlVLHtXSGdDxhg51A/formResponse";
+const E = {first:"entry.2019063221", last:"entry.2093153725", shirt:"entry.843044989", pants:"entry.18624866"};
+const SIZES = ["16","18","XS","S","M","L","XL","XXL","3XL"];
+const PIN = "1247"; // a door for the coach screen; the data itself needs the coach's sign-in
+const ROSTER = [
+  ["עדי לוי","ליגה לאומית"],["יבגני ג'וטובסקי","ליגה לאומית"],["אלעזר שנקר","ליגה לאומית"],["דניאל בן אהרון","ליגה לאומית · מאמן"],
+  ["אביב ל׳","ליגה א' (M4)"],["טל כהן","ליגה א' (M4) · מאמן"],["ישראל בן ארוש","ליגה א' (M4)"],["אוהד א׳","ליגה א' (M4)"],
+  ["אורי מוסנזון","ליגה א' (M5)"],["שגיא א׳","ליגה א' (M5)"],["אנדרי סטולבוב","ליגה א' (M5)"],["צור כהן","ליגה א' (M5)"],["אורי א׳","ליגה א' (M5)"],
+  ["שחר גילעד","מאמנים"],["דור נברו","מאמנים"],["טאו מ׳","מאמנים"],["ליאוניד גימפלסון","מאמנים"]
+].map(([name, group]) => ({name, group}));
+const $ = id => document.getElementById(id);
+const clean = s => (s||"").trim().replace(/\s+/g," ");
+const tick = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} };
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 2200); }
+
+const topBar = $("top");
+addEventListener("scroll", () => topBar.classList.toggle("scrolled", scrollY > 90), {passive:true});
+
+// ---------- parent form ----------
+const pick = {shirt:null, pants:null};
+document.querySelectorAll(".sizes").forEach(box => {
+  const k = box.dataset.k;
+  box.innerHTML = SIZES.map(s => `<button type="button" class="size" aria-pressed="false" data-s="${s}">${s}</button>`).join("")
+    + `<button type="button" class="size other" aria-pressed="false" data-s="other">אחר</button>`;
+  box.addEventListener("click", e => {
+    const b = e.target.closest("[data-s]"); if (!b) return;
+    pick[k] = b.dataset.s;
+    box.querySelectorAll(".size").forEach(x => x.setAttribute("aria-pressed", x === b));
+    const open = pick[k] === "other";
+    $(k+"Reveal").classList.toggle("open", open);
+    if (open) setTimeout(() => $(k+"Other").focus(), 150);
+    tick(8); update();
+  });
+});
+const sizeOf = k => pick[k] === "other" ? clean($(k+"Other").value) : pick[k];
+["first","last","shirtOther","pantsOther"].forEach(id => $(id).addEventListener("input", update));
+$("first").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("last").focus(); } });
+
+function state(){ return {name: !!(clean($("first").value) && clean($("last").value)), shirt: !!sizeOf("shirt"), pants: !!sizeOf("pants")}; }
+function update(){
+  const s = state(), done = [s.name, s.shirt, s.pants];
+  [["gName",s.name],["gShirt",s.shirt],["gPants",s.pants]].forEach(([g,ok]) => { $(g).classList.toggle("ok", ok); if (ok) $(g).classList.remove("need"); });
+  document.querySelectorAll(".dots b").forEach((b,i) => b.classList.toggle("on", done[i]));
+  const left = done.filter(x => !x).length;
+  $("progTxt").textContent = left === 0 ? "הכול מוכן לשליחה" : left === 1 ? "נשאר שלב אחד" : `נשארו ${left} שלבים`;
+  $("send").classList.toggle("ready", left === 0);
+  if (!left) $("err").hidden = true;
+}
+
+let openSheet = null;
+function showSheet(id){ if (openSheet) $(openSheet).classList.remove("show"); openSheet = id; $("scrim").classList.add("show"); $(id).classList.add("show"); }
+function hideSheet(){ if (!openSheet) return; $(openSheet).classList.remove("show"); $("scrim").classList.remove("show"); openSheet = null; }
+$("scrim").addEventListener("click", () => { if (openSheet !== "doneSheet") hideSheet(); });
+document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", hideSheet));
+addEventListener("keydown", e => { if (e.key === "Escape") hideSheet(); });
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const s = state();
+  const missing = [["gName",s.name,"שם השחקן"],["gShirt",s.shirt,"מידת חולצה"],["gPants",s.pants,"מידת מכנס"]].filter(x => !x[1]);
+  if (missing.length){
+    missing.forEach(([g]) => { const el = $(g); el.classList.add("need"); el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); });
+    $(missing[0][0]).scrollIntoView({behavior:"smooth", block:"center"});
+    $("err").textContent = "חסר: " + missing.map(x => x[2]).join(", "); $("err").hidden = false;
+    tick([20,40,20]); return;
+  }
+  const rec = {first: clean($("first").value), last: clean($("last").value), shirt: sizeOf("shirt"), pants: sizeOf("pants")};
+  const body = new URLSearchParams();
+  body.append(E.first, rec.first); body.append(E.last, rec.last);
+  for (const k of ["shirt","pants"]){
+    if (pick[k] === "other"){ body.append(E[k], "__other_option__"); body.append(E[k]+".other_option_response", rec[k]); }
+    else body.append(E[k], rec[k]);
+  }
+  const btn = $("send"); btn.classList.add("wait"); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span>שולח';
+  try {
+    const sheet = fetch(FORM, {method:"POST", mode:"no-cors", body}); // opaque by design; a network failure still throws
+    const live = window.saveAnswer ? window.saveAnswer(rec).catch(() => null) : Promise.resolve(null); // coach dashboard copy
+    await sheet; await live;
+    const esc = t => t.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    $("sum").innerHTML = `<div><dt>שחקן</dt><dd>${esc(rec.first+" "+rec.last)}</dd></div><div><dt>חולצה</dt><dd>${esc(rec.shirt)}</dd></div><div><dt>מכנס</dt><dd>${esc(rec.pants)}</dd></div>`;
+    showSheet("doneSheet"); tick([15,60,25]);
+  } catch(err){
+    $("err").textContent = "השליחה לא עברה. בדקו שיש אינטרנט ונסו שוב."; $("err").hidden = false;
+  } finally { btn.classList.remove("wait"); btn.disabled = false; btn.textContent = "שליחה"; }
+});
+
+$("again").addEventListener("click", () => {
+  $("f").reset(); pick.shirt = pick.pants = null;
+  document.querySelectorAll(".size").forEach(x => x.setAttribute("aria-pressed","false"));
+  ["shirtReveal","pantsReveal"].forEach(id => $(id).classList.remove("open"));
+  hideSheet(); update(); scrollTo({top:0, behavior:"smooth"}); setTimeout(() => $("first").focus(), 400);
+});
+
+// ---------- coach entry ----------
+let pin = "";
+const drawPin = () => $("pin").querySelectorAll("b").forEach((b,i) => b.classList.toggle("on", i < pin.length));
+["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(k => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = k;
+  if (!k){ b.className = "ghost"; b.tabIndex = -1; b.disabled = true; }
+  if (k === "⌫"){ b.className = "ghost"; b.setAttribute("aria-label","מחיקה"); }
+  b.addEventListener("pointerdown", () => tick(5));
+  b.addEventListener("click", () => {
+    if (!k) return;
+    $("pin").classList.remove("bad");
+    if (k === "⌫") pin = pin.slice(0,-1); else if (pin.length < 4) pin += k;
+    drawPin();
+    if (pin.length === 4){
+      const ok = pin === PIN;
+      setTimeout(() => {
+        pin = ""; drawPin();
+        if (ok){ hideSheet(); openCoach(); }
+        else { const p = $("pin"); void p.offsetWidth; p.classList.add("bad"); tick([30,50,30]); }
+      }, 160);
+    }
+  });
+  $("keypad").appendChild(b);
+});
+$("coachBtn").addEventListener("click", () => {
+  if (!$("coachView").hidden){ closeCoach(); return; }
+  pin = ""; drawPin(); $("pin").classList.remove("bad"); showSheet("pinSheet");
+});
+function openCoach(){
+  $("parentView").hidden = true; $("coachView").hidden = false;
+  document.body.classList.add("coach-on"); $("brandTxt").textContent = "דשבורד מאמן"; $("coachBtn").textContent = "טופס";
+  scrollTo(0,0);
+  if (window.startCoach) window.startCoach(); else { $("loginBox").hidden = true; $("dash").hidden = true; toast("טוען…"); setTimeout(() => window.startCoach && window.startCoach(), 1200); }
+}
+function closeCoach(){
+  $("coachView").hidden = true; $("parentView").hidden = false;
+  document.body.classList.remove("coach-on"); $("brandTxt").textContent = "מידות לתלבושת הליגה"; $("coachBtn").textContent = "מאמן";
+  scrollTo(0,0);
+}
+$("backToForm").addEventListener("click", closeCoach);
+update();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+// Same Firebase project as the club's attendance app. Answers are readable only by its admin (see firestore rules).
+const app = initializeApp({
+  apiKey: "AIzaSyDhPiyIrP1zOu5bNSpsQDyXFgZBP6rV7vo",
+  authDomain: "ttcmh-2a752.firebaseapp.com",
+  projectId: "ttcmh-2a752",
+  storageBucket: "ttcmh-2a752.firebasestorage.app",
+  messagingSenderId: "198162387540",
+  appId: "1:198162387540:web:f4c4728a39aed9468c13c1"
+});
+const auth = getAuth(app), db = getFirestore(app);
+const COL = "uniformResponses";
+const $ = id => document.getElementById(id);
+
+window.saveAnswer = rec => addDoc(collection(db, COL), {first: rec.first, last: rec.last, shirt: rec.shirt, pants: rec.pants, at: serverTimestamp()});
+
+let unsub = null, unsubR = null, answers = [], tab = "missing", query = "", started = false;
+// The coach's edited roster lives in one Firestore doc; until it exists the built-in list is used.
+const RDOC = () => doc(db, "uniformConfig", "roster");
+const saveRoster = players => setDoc(RDOC(), {players, at: serverTimestamp()});
+
+window.startCoach = () => {
+  if (started) return; started = true;
+  onAuthStateChanged(auth, user => {
+    if (unsub){ unsub(); unsub = null; }
+    if (unsubR){ unsubR(); unsubR = null; }
+    $("loginBox").hidden = !!user; $("dash").hidden = !user;
+    if (!user) return;
+    $("whoTxt").textContent = "מחובר: " + (user.email || "");
+    unsubR = onSnapshot(RDOC(), s => {
+      const p = s.exists() && s.data().players;
+      if (Array.isArray(p)) { window.ROSTER_DATA = p; render(); }
+    }, () => {});
+    unsub = onSnapshot(collection(db, COL), snap => {
+      $("dashErr").hidden = true;
+      answers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      render();
+    }, err => {
+      $("dashErr").textContent = err.code === "permission-denied"
+        ? "אין הרשאה לקרוא את התשובות. צריך להוסיף את חוק הגישה ב-Firebase, או להיכנס עם משתמש מנהל."
+        : "לא הצלחתי לטעון את התשובות. נסה לרענן.";
+      $("dashErr").hidden = false; answers = []; render();
+    });
+  });
+};
+
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("loginBtn"); btn.disabled = true; $("loginErr").hidden = true;
+  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value); }
+  catch(err){ $("loginErr").textContent = "האימייל או הסיסמה לא נכונים."; $("loginErr").hidden = false; }
+  finally { btn.disabled = false; }
+});
+$("logout").addEventListener("click", () => signOut(auth));
+
+// ---------- data shaping ----------
+const PAGE = "https://shahar1987.github.io/ttc-uniform-sizes/";
+function compute(){
+  const roster = window.ROSTER_DATA;
+  const time = a => a.at && a.at.toMillis ? a.at.toMillis() : 0;
+  const rows = answers.filter(a => window.UniformMatch.norm(a.first) !== "בדיקה").map(a => {   // self-test answers are kept out
+    const auto = window.UniformMatch.matchName(a.first, a.last, roster);
+    const player = a.player || auto.name;
+    return {...a, player, suggestion: auto.suggestion, ms: time(a)};
+  }).sort((x, y) => x.ms - y.ms);
+  const names = new Set(roster.map(p => p.name));
+  const latest = new Map();
+  rows.forEach(r => { if (names.has(r.player)) latest.set(r.player, r); });   // later answers win; removed players drop out
+  const unmatched = rows.filter(r => !r.player);
+  const kept = [...latest.values(), ...unmatched];
+  const status = roster.map(p => ({...p, ans: latest.get(p.name) || null}));
+  return {rows, latest, unmatched, kept, status};
+}
+// coaches by name, so the view holds even when the roster comes from the saved Firestore copy
+const COACHES = ["שחר גילעד","טאו מ׳","דניאל בן אהרון","דור נברו","ליאוניד גימפלסון","טל כהן"];
+// exact name first, then the same fuzzy match the form uses (spelling drifts: תאו/טאו, ליאוניד/לאוניד)
+function findCoach(d, n){
+  const hit = d.status.find(p => p.name === n); if (hit) return hit;
+  const [f, ...l] = n.split(" "), m = window.UniformMatch.matchName(f, l.join(" "), d.status);
+  return d.status.find(p => p.name === m.name);
+}
+const SZ = ["16","18","XS","S","M","L","XL","XXL","3XL"];
+const fmtTime = ms => ms ? new Date(ms).toLocaleString("he-IL", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "";
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+function render(){
+  const d = compute();
+  const filled = d.latest.size, total = d.status.length;
+  $("tFilled").textContent = filled; $("tLeft").textContent = total - filled; $("tTotal").textContent = total;
+  $("meter").style.width = (total ? filled / total * 100 : 0) + "%";
+  $("cMissing").textContent = total - filled; $("cAll").textContent = total; $("cAnswers").textContent = d.rows.length;
+  $("cCoaches").textContent = COACHES.length;
+
+  const missingNames = d.status.filter(p => !p.ans).map(p => p.name);
+  const msg = missingNames.length
+    ? `היי 🏓 עוד חסרות לנו מידות לתלבושת הליגה של:\n${missingNames.map((n, i) => `${i + 1}. ${n}`).join("\n")}\n\nממלאים כאן, לוקח דקה: ${PAGE}`
+    : `תודה לכולם, קיבלנו את כל המידות לתלבושת! 🏓`;
+  $("remind").href = "https://wa.me/?text=" + encodeURIComponent(msg);
+
+  const pane = $("pane"); pane.replaceChildren(); pane.style.animation = "none"; void pane.offsetWidth; pane.style.animation = "";
+  if (tab === "missing") paneMissing(pane, d);
+  if (tab === "all") paneAll(pane, d);
+  if (tab === "coaches") paneCoaches(pane, d);
+  if (tab === "order") paneOrder(pane, d);
+  if (tab === "answers") paneAnswers(pane, d);
+}
+
+function head(pane, title, note){ const h = el("div","ph"); h.append(el("h2",null,title)); if (note) h.append(el("small",null,note)); pane.append(h); }
+
+function paneMissing(pane, d){
+  const list = d.status.filter(p => !p.ans);
+  head(pane, "עוד לא מילאו", list.length ? `${list.length} שחקנים` : "");
+  if (!list.length){ pane.append(el("div","empty","כולם מילאו 🎉 אפשר להזמין.")); return; }
+  list.forEach((p, i) => { const r = tapRow(p); r.append(el("span","idx",String(i + 1))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n, el("span","badge no","חסר")); pane.append(r); });
+}
+
+// rows open the edit sheet
+function tapRow(p){
+  const r = el("div","row tap"); r.tabIndex = 0; r.setAttribute("role","button"); r.setAttribute("aria-label","עריכת " + p.name);
+  r.addEventListener("click", () => openEdit(p));
+  r.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openEdit(p); } });
+  return r;
+}
+
+function paneAll(pane, d){
+  head(pane, "כל השחקנים והמאמנים", "לחיצה על שם לעריכה");
+  const add = el("button","mini add","+ הוספת שחקן"); add.type = "button"; add.addEventListener("click", () => openEdit(null));
+  pane.lastChild.append(add);
+  const s = el("input","search"); s.type = "search"; s.placeholder = "חיפוש לפי שם או קבוצה"; s.value = query;
+  s.addEventListener("input", () => { query = s.value; draw(); });
+  pane.append(s);
+  const box = el("div"); pane.append(box);
+  function draw(){
+    box.replaceChildren();
+    const q = query.trim();
+    d.status.map((p, i) => ({...p, no: i + 1})).filter(p => !q || (p.name + " " + p.group).includes(q)).forEach(p => {
+      const r = tapRow(p); r.append(el("span","idx",String(p.no))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n);
+      if (p.ans){ r.append(el("span","chip",p.ans.shirt || "—"), el("span","chip",p.ans.pants || "—")); }
+      else r.append(el("span","badge no","עוד לא"));
+      box.append(r);
+    });
+    if (!box.children.length) box.append(el("div","empty","אין תוצאות"));
+  }
+  draw();
+}
+
+function paneCoaches(pane, d){
+  const list = COACHES.map(n => findCoach(d, n) || {name: n, group: "לא ברשימה", ans: null});
+  const filled = list.filter(p => p.ans);
+  head(pane, "מאמנים", `${filled.length} מתוך ${list.length} מילאו`);
+  list.forEach((p, i) => {
+    const r = p.group === "לא ברשימה" ? el("div","row") : tapRow(p);
+    r.append(el("span","idx",String(i + 1))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n);
+    if (p.ans) r.append(el("span","chip",p.ans.shirt || "—"), el("span","chip",p.ans.pants || "—"));
+    else r.append(el("span","badge no","עוד לא"));
+    pane.append(r);
+  });
+  if (filled.length) paneOrder(pane, d, filled.map(p => p.ans), "כמה להזמין למאמנים");
+}
+
+function paneOrder(pane, d, kept = d.kept, title = "כמה להזמין"){
+  head(pane, title, `לפי ${kept.length} תשובות`);
+  const count = (k, s) => kept.filter(r => String(r[k]) === s).length;
+  const others = k => kept.filter(r => r[k] && !SZ.includes(String(r[k]))).map(r => r[k]);
+  const lines = SZ.map(s => [s, count("shirt", s), count("pants", s)]);
+  const oS = others("shirt"), oP = others("pants");
+  if (oS.length || oP.length) lines.push(["אחר", oS.length, oP.length]);
+  const max = Math.max(1, ...lines.map(l => Math.max(l[1], l[2])));
+  const t = el("table","otable"); const th = el("tr");
+  ["מידה","חולצות","מכנסיים"].forEach(x => th.append(el("th",null,x))); t.append(th);
+  const cell = n => { const td = el("td"); const w = el("span","cellbar"); w.append(el("span",null,String(n))); const bar = el("i"); bar.style.width = (n / max * 56) + "px"; w.append(bar); td.append(w); return td; };
+  lines.forEach(l => { const tr = el("tr"); tr.append(el("td",null,l[0]), cell(l[1]), cell(l[2])); t.append(tr); });
+  const tot = el("tr","total"); tot.append(el("td",null,"סה\"כ"), el("td",null,String(lines.reduce((a,l)=>a+l[1],0))), el("td",null,String(lines.reduce((a,l)=>a+l[2],0)))); t.append(tot);
+  pane.append(t);
+  if (oS.length || oP.length) pane.append(el("div","empty",`מידות "אחר": חולצה ${oS.join(", ") || "—"} · מכנס ${oP.join(", ") || "—"}`));
+}
+
+function paneAnswers(pane, d){
+  head(pane, "כל התשובות", "כפי שההורים כתבו");
+  if (!d.rows.length){ pane.append(el("div","empty","עוד אין תשובות. כשהורה ימלא, זה יופיע כאן מיד.")); return; }
+  const names = new Set(window.ROSTER_DATA.map(p => p.name));
+  [...d.rows].reverse().forEach((a, i, all) => {
+    const gone = a.player && !names.has(a.player);
+    if (gone) a = {...a, player: a.player + " (הוסר מהרשימה)", suggestion: ""};
+    const r = el("div","row arow");
+    const n = el("div","nm");
+    n.style.display = "flex"; n.style.alignItems = "center"; n.style.gap = "12px";
+    const txt = el("div"); txt.style.minWidth = "0";
+    txt.append(el("b",null,`${a.first} ${a.last}`), el("small",null,[fmtTime(a.ms), a.player ? "← " + a.player : "לא זוהה ברשימה"].filter(Boolean).join(" · ")));
+    n.append(el("span","idx",String(all.length - i)), txt);
+    const tools = el("div","tools");
+    r.append(n, tools);
+    tools.append(el("span","chip",a.shirt || "—"), el("span","chip",a.pants || "—"));
+    const sel = el("select","assign"); sel.setAttribute("aria-label","שיוך לשחקן");
+    sel.append(new Option(a.player ? "שיוך…" : (a.suggestion ? `אולי ${a.suggestion}?` : "בחירת שחקן…"), ""));
+    window.ROSTER_DATA.forEach(p => sel.append(new Option(p.name, p.name)));
+    sel.addEventListener("change", async () => { if (!sel.value) return; try { await updateDoc(doc(db, COL, a.id), {player: sel.value}); toast("שויך ל" + sel.value); } catch(e){ toast("השיוך לא נשמר"); } });
+    const del = el("button","mini","מחיקה"); del.type = "button";
+    del.addEventListener("click", async () => {
+      if (del.dataset.armed !== "1"){ del.dataset.armed = "1"; del.textContent = "בטוח?"; del.classList.add("danger"); setTimeout(() => { if (del.isConnected){ del.dataset.armed = ""; del.textContent = "מחיקה"; del.classList.remove("danger"); } }, 3500); return; }
+      try { await deleteDoc(doc(db, COL, a.id)); toast("נמחק"); } catch(e){ toast("המחיקה לא הצליחה"); }
+    });
+    if (!a.player || gone) tools.append(sel);
+    tools.append(del);
+    pane.append(r);
+  });
+}
+
+// ---------- edit / add / remove a player ----------
+const cl = s => (s || "").trim().replace(/\s+/g, " ");
+let editing = null;   // roster entry being edited; null = adding
+function fillSize(k, val){
+  const s = $("ed" + k), o = $("ed" + k + "O");
+  s.replaceChildren(new Option("—", ""), ...SZ.map(z => new Option(z, z)));
+  if (val && !SZ.includes(val)) s.append(new Option(val, val));
+  s.append(new Option("אחר…", "__other"));
+  s.value = val || ""; o.value = ""; o.hidden = true;
+}
+["Shirt","Pants"].forEach(k => $("ed" + k).addEventListener("change", () => { const o = $("ed" + k + "O"); o.hidden = $("ed" + k).value !== "__other"; if (!o.hidden) o.focus(); }));
+const sizeVal = k => $("ed" + k).value === "__other" ? cl($("ed" + k + "O").value) : $("ed" + k).value;
+const edErr = t => { $("edErr").textContent = t; $("edErr").hidden = !t; };
+const resetDel = () => { const b = $("edDel"); b.dataset.armed = ""; b.textContent = "הסרה מהרשימה"; b.classList.remove("danger"); };
+
+function openEdit(p){
+  editing = p;
+  const ans = p ? compute().latest.get(p.name) : null;
+  $("editTitle").textContent = p ? "עריכת שחקן" : "הוספת שחקן";
+  $("edName").value = p ? p.name : ""; $("edGroup").value = p ? p.group : "";
+  $("groupList").replaceChildren(...[...new Set(window.ROSTER_DATA.map(x => x.group))].map(g => new Option(g)));
+  fillSize("Shirt", ans?.shirt); fillSize("Pants", ans?.pants);
+  $("edDel").hidden = !p; resetDel(); edErr("");
+  showSheet("editSheet");
+  if (!p) setTimeout(() => $("edName").focus(), 350);
+}
+
+async function busy(btn, fn){ btn.disabled = true; try { await fn(); } finally { btn.disabled = false; } }
+
+$("editForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = cl($("edName").value), group = cl($("edGroup").value);
+  const shirt = sizeVal("Shirt"), pants = sizeVal("Pants");
+  if (!name) return edErr("חסר שם");
+  if (($("edShirt").value === "__other" && !shirt) || ($("edPants").value === "__other" && !pants)) return edErr("כתבו את המידה האחרת");
+  const old = editing && editing.name;
+  const list = window.ROSTER_DATA.map(x => ({name: x.name, group: x.group}));
+  if (list.some(x => x.name === name && x.name !== old)) return edErr("השם הזה כבר ברשימה");
+  if (old) list[list.findIndex(x => x.name === old)] = {name, group}; else list.push({name, group});
+  const d = compute(), ans = old ? d.latest.get(old) : null;
+  busy($("edSave"), async () => {
+    try {
+      await saveRoster(list);
+      window.ROSTER_DATA = list;
+      if (old && name !== old)   // keep this player's answers attached under the new name
+        await Promise.all(d.rows.filter(r => r.player === old).map(r => updateDoc(doc(db, COL, r.id), {player: name})));
+      if (ans){
+        const ch = {};
+        if (shirt !== ans.shirt) ch.shirt = shirt;
+        if (pants !== ans.pants) ch.pants = pants;
+        if (Object.keys(ch).length) await updateDoc(doc(db, COL, ans.id), ch);
+      } else if (shirt || pants){
+        const [first, ...rest] = name.split(" ");
+        await addDoc(collection(db, COL), {first, last: rest.join(" "), shirt, pants, player: name, by: "coach", at: serverTimestamp()});
+      }
+      hideSheet(); render(); toast(old ? "נשמר" : "נוסף לרשימה");
+    } catch(err){ edErr("לא נשמר. בדקו שחוק הגישה ב-Firebase מעודכן ונסו שוב."); }
+  });
+});
+
+$("edDel").addEventListener("click", () => {
+  const b = $("edDel");
+  if (b.dataset.armed !== "1"){ b.dataset.armed = "1"; b.textContent = "בטוח? לחיצה נוספת מסירה"; b.classList.add("danger"); setTimeout(() => b.isConnected && resetDel(), 3500); return; }
+  const old = editing.name, d = compute();
+  busy(b, async () => {
+    try {
+      await saveRoster(window.ROSTER_DATA.filter(x => x.name !== old).map(x => ({name: x.name, group: x.group})));
+      // answers stay saved but are pinned to the removed name, so they leave the counts
+      await Promise.all(d.rows.filter(r => r.player === old).map(r => updateDoc(doc(db, COL, r.id), {player: old})));
+      window.ROSTER_DATA = window.ROSTER_DATA.filter(x => x.name !== old);
+      hideSheet(); render(); toast(old + " הוסר");
+    } catch(err){ edErr("ההסרה לא נשמרה. בדקו שחוק הגישה ב-Firebase מעודכן."); resetDel(); }
+  });
+});
+
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  tab = b.dataset.tab;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-selected", x === b));
+  render();
+}));
+
+$("csv").addEventListener("click", () => {
+  const d = compute();
+  const q = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const lines = [["מס'","שם","קבוצה","מילא","חולצה","מכנס","השם שנכתב","מתי"].map(q).join(",")];
+  d.status.forEach((p, i) => lines.push([i + 1, p.name, p.group, p.ans ? "כן" : "לא", p.ans?.shirt, p.ans?.pants, p.ans ? p.ans.first + " " + p.ans.last : "", p.ans ? fmtTime(p.ans.ms) : ""].map(q).join(",")));
+  d.unmatched.forEach(a => lines.push(["", "", "", "לא זוהה", a.shirt, a.pants, a.first + " " + a.last, fmtTime(a.ms)].map(q).join(",")));
+  const miss = d.status.filter(p => !p.ans);
+  lines.push("", [q("עוד לא מילאו (" + miss.length + ")")].join(","), ["מס'","שם","קבוצה"].map(q).join(","));
+  miss.forEach((p, i) => lines.push([i + 1, p.name, p.group].map(q).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], {type: "text/csv;charset=utf-8"});
+  const link = Object.assign(document.createElement("a"), {href: URL.createObjectURL(blob), download: "מידות-תלבושת-ליגה.csv"});
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+});
+</script>
+<script>
+// roster shared with the module (module scripts can't see the classic script's consts)
+window.ROSTER_DATA = ROSTER;
+</script>
+</body>
+</html>
