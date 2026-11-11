@@ -1,5 +1,7 @@
-// Network first so parents always see fresh results; the cache only answers when there is no signal.
-const CACHE = "ttc-v14";
+// Pages, code and results: network first so parents always see fresh results; the cache only answers when there is no signal.
+// Images and icons: served from the device at once and refreshed in the background (they rarely change).
+const CACHE = "ttc-v15";
+const STATIC = /\.(png|jpe?g|webp|svg|ico|woff2?)$/i;
 const SHELL = ["./", "index.html", "app.js", "manifest.json", "icon-192.png", "icon-512.png", "logo.png", "mark.png", "data.json", "posts.json"];
 
 self.addEventListener("install", e => {
@@ -19,6 +21,17 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
   const key = new URL(req.url); key.search = "";
+  if (STATIC.test(key.pathname)) {
+    const refresh = fetch(req).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key.href, copy)); }
+      return res;
+    });
+    e.respondWith(caches.match(key.href).then(hit => {
+      if (hit) { e.waitUntil(refresh.catch(() => {})); return hit; }
+      return refresh;
+    }));
+    return;
+  }
   e.respondWith(
     fetch(req, { cache: "no-cache" }).then(res => {
       if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key.href, copy)); }
