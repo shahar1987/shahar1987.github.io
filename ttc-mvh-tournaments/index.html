@@ -569,7 +569,7 @@ function todayIL(){try{const p={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asi
 let lastSig=null;
 function stSig(){return JSON.stringify(S,(k,v)=>k==='tab'||k==='phase'||k==='rev'?undefined:v)}
 function save(){if(!TID)return;const sig=stSig(),changed=sig!==lastSig;lastSig=sig;if(changed)S.rev=(S.rev||0)+1;try{localStorage.setItem(KEY+'.'+TID,JSON.stringify(S))}catch(e){}if(changed)scheduleCloud()}
-function uid(){return Math.random().toString(36).slice(2,9)}
+function uid(){try{const a=crypto.getRandomValues(new Uint32Array(2));return (a[0].toString(36)+a[1].toString(36)).padEnd(7,"0").slice(0,7)}catch(e){return Math.random().toString(36).slice(2,9)}}
 function logEv(t,kind){
   S.log.unshift({t:Date.now(),m:t,by:(PROFILE&&PROFILE.name)||(USER&&USER.email)||'',k:kind||'',d:S.rev||0});
   if(S.log.length>800)S.log.length=800;
@@ -1986,7 +1986,7 @@ function resetAll(){if(!confirm('לאפס את כל הנתונים של התחר
 /* מבנה הטופס של האיגוד (tttm.co.il): המארחת A,B,C והאורחת X,Y,Z; 7 משחקים בסדר קבוע, כל אחד הטוב מ-5; המפגש נגמר ב-4 ניצחונות.
    המערכות נשמרות תמיד [מארחת, אורחת] כמו בטופס הנייר; המסך מציג אותנו בשורה הראשונה. */
 // shortcut: הסגל קבוע בקוד, לעדכן כאן כשמצטרף שחקן
-const LEAGUE_ROSTER=['עדי לוי','אלעזר שנקר','יבגני ז\'וטובסקי','עומר סיטון','דניאל בן אהרון','דור נברו','אביב ל׳'];
+const LEAGUE_ROSTER=['עדי לוי','אלעזר שנקר','יבגני ז\'וטובסקי','עומר סיטון','דניאל בן אהרון','דור נברו','אביב לזר'];
 const LG_ORDER=[null,[0,1],[1,0],[2,2],[0,0],[2,1],[1,2]]; // [אינדקס מארחת, אינדקס אורחת]; null = זוגות
 function lgFresh(){return {step:'lineup',lg:'',usName:'',opp:'',home:true,time:'',mid:'',us:['','',''],usD:['',''],them:['','',''],themD:['',''],games:LG_ORDER.map(()=>({sets:[]})),closed:[]}}
 function lgL(){if(!S.league)S.league=lgFresh();return S.league}
@@ -2285,7 +2285,7 @@ window.addEventListener('offline',()=>setSync('offline'));
 window.addEventListener('beforeunload',e=>{if(syncState==='error'||syncState==='pending'||syncState==='saving'||syncState==='offline'){e.preventDefault();e.returnValue=''}});
 
 /* ---------- Connection diagnostics ---------- */
-const RULE_TEXT=`match /tournaments/{id} {\n  allow read: if hasProfile();\n  allow create, update: if canCompete()\n    && request.resource.data.get('state', '') is string;\n  allow delete: if hasPerm('competitions');\n}`;
+const RULE_TEXT=`match /tournaments/{id} {\n  allow read: if isTeam() || canCompete();\n  allow create, update: if canCompete()\n    && request.resource.data.get('state', '') is string;\n  allow delete: if hasPerm('competitions');\n}`;
 // אותו היגיון כמו canCompete() בכללי Firestore ו-userPermissions() באפליקציית הנוכחות
 function canCompete(){if(!PROFILE)return false;const r=String(PROFILE.role||'').trim().toLowerCase();if(r==='admin')return true;if(Array.isArray(PROFILE.permissions))return PROFILE.permissions.includes('competitions');return r==='coach'||r==='viewer'}
 async function diagnostics(){
