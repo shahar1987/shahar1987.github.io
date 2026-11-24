@@ -549,7 +549,7 @@ table.st th{font-size:max(.82em,13px)}
 /* ========================= STATE ========================= */
 const KEY='tenlishulchan.v1';
 // עדכון אוטומטי: מכשיר שמחזיק גרסה ישנה (אייקון במסך הבית, לשונית פתוחה) נטען מחדש לבד כשעולה גרסה חדשה, רק כשאין חלון פתוח
-const APP_VER='2026-11-01.7';
+const APP_VER='69c6619';
 let verTag=null;
 // קודם בודקים רק את הכותרות (כמה בתים); את הדף כולו (230KB) מורידים רק כשהוא באמת השתנה
 function checkUpdate(){if(document.querySelector('#modal .modal'))return;fetch(location.pathname,{method:'HEAD',cache:'no-store'}).then(r=>{const tag=r.headers.get('etag')||r.headers.get('last-modified');if(tag&&tag===verTag)return;verTag=tag;fullCheck()}).catch(()=>{})}
