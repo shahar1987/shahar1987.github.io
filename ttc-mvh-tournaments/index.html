@@ -10,7 +10,7 @@
 <link rel="icon" href="./icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="תן לי שולחן">
-<link rel="apple-touch-icon" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js">
@@ -271,6 +271,7 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--gut) + 4px) var(--gut) ca
 .table .players{position:relative;z-index:2;font-weight:600;font-size:clamp(15px,1.15vw,17.5px);line-height:1.24;text-align:center;margin:10px 0;text-shadow:0 1px 2px rgba(0,0,0,.22)}
 .table .players .vs{display:block;font-size:.62em;font-weight:400;opacity:.7;margin:3px 0}
 .table .meta{position:relative;z-index:2;font-size:.76em;opacity:.85;display:flex;justify-content:space-between;gap:8px}
+.clock-reset{font:inherit;font-size:1em;padding:2px 8px;margin-inline-start:6px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;min-height:0}
 .table .free-lbl{position:relative;z-index:2;text-align:center;font-family:"Assistant",sans-serif;font-weight:700;font-size:clamp(16px,1.3vw,19px);margin:auto;letter-spacing:.02em}
 .table.drop{outline:3px dashed var(--ball);outline-offset:-3px}
 .table.clearing{animation:clearWipe .42s var(--ease) both}
@@ -1309,7 +1310,7 @@ function tablesTab(){
       <div class="tnum"><span>שולחן ${esc(t.n)}</span><span>${esc(matchLabel(m))}</span></div>
       ${fresh?'<span class="new-tag">חדש · לקרוא לשחקנים</span>':''}
       <div class="players">${esc(sideName(m,1))}<span class="vs">נגד</span>${esc(sideName(m,2))}</div>
-      <div class="meta"><span>${mins(dur)} דק׳${stuck?' · אולי שכחו לדווח?':''}</span><span>הזינו תוצאה</span></div></div>`}).join('')}</div>
+      <div class="meta"><span>${mins(dur)} דק׳${stuck?' · אולי שכחו לדווח?':''} <button class="clock-reset" aria-label="איפוס שעון שולחן ${esc(t.n)}" onclick="event.stopPropagation();resetClock('${ja(m.id)}')">⟲ איפוס</button></span><span>הזינו תוצאה</span></div></div>`}).join('')}</div>
   </div><aside class="lg-side">
   <div class="section-h"><h2>בתור (${q.length})</h2><span class="tiny">גררו לשולחן פנוי</span></div>
   ${q.length?`<ul class="queue">${q.slice(0,40).map(x=>{const m=x.m;const i1=mins(now-idleSince(sideIds(m,1)[0])),i2=mins(now-idleSince(sideIds(m,2)[0]));const cls=v=>v>=30?'idle-bad':v>=20?'idle-warn':'';
@@ -1352,7 +1353,7 @@ function openResult(mid){
       <button class="danger" onclick="walkover('${ja(mid)}','${ja(m.p2)}')">${esc(sideName(m,2))} לא הגיע/ה</button>
       <button class="danger" onclick="walkover('${ja(mid)}','${ja(m.p1)}')">${esc(sideName(m,1))} לא הגיע/ה</button>
       ${m.status==='playing'?`<button class="danger" onclick="retire('${ja(mid)}','${ja(m.p2)}')">${esc(pname(m.p2))} פרש/ה</button><button class="danger" onclick="retire('${ja(mid)}','${ja(m.p1)}')">${esc(pname(m.p1))} פרש/ה</button>`:''}
-      ${m.status==='playing'?`<button onclick="backToQueue('${ja(mid)}')">החזר לתור (הוזן בטעות)</button>`:''}
+      ${m.status==='playing'?`<button onclick="resetClock('${ja(mid)}');closeModal()">⟲ איפוס שעון</button><button onclick="backToQueue('${ja(mid)}')">החזר לתור (הוזן בטעות)</button>`:''}
     </div></details>`);
   openMid=mid;const box=document.getElementById('sets');
   box.querySelectorAll('input').forEach(inp=>{
@@ -1419,6 +1420,8 @@ function autoOut(){const out=S.out||[];if(!out.length)return false;const m=S.mat
   if(m.stage==='king'){const tg=m.target||S.settings.kingTarget;finishPoint(m,w===m.p1?[tg,0]:[0,tg],w===m.p1?1:2,true);return true}
   const sets=[];for(let i=0;i<needSets(m);i++)sets.push(w===m.p1?[11,0]:[0,11]);finishMatch(m,w,sets,{wo:true,retired:null},true);return true}
 function retire(mid,who){const m=S.matches.find(x=>x.id===mid);const need=needSets(m);const w=who===m.p1?m.p2:m.p1;const sets=[];let a=0,b=0;for(const s of readSets(m).filter(s=>s&&validSet(s[0],s[1]))){const l=s[0]>s[1]?1:2;if((w===m.p1?l===2&&b>=need-1:l===1&&a>=need-1))continue;sets.push(s);if(l===1)a++;else b++}while((w===m.p1?a:b)<need){sets.push(w===m.p1?[11,0]:[0,11]);if(w===m.p1)a++;else b++}finishMatch(m,w,sets,{wo:false,retired:who})}
+// איפוס שעון: המשחק נשאר על השולחן, הספירה מתחילה מעכשיו (למשל כשהשחקנים הגיעו באיחור)
+function resetClock(mid){const m=S.matches.find(x=>x.id===mid);if(!m||m.status!=='playing')return;m.startedAt=Date.now();overdueSeen.delete(mid);toast(`השעון של שולחן ${m.table} אופס`);commit()}
 function backToQueue(mid){const m=S.matches.find(x=>x.id===mid);const t=S.tables.find(x=>x.matchId===mid);if(t)t.matchId=null;
   if(m.stage==='king'){S.kingQueue=[m.p2,...S.kingQueue.filter(x=>x!==m.p2)];S.matches=S.matches.filter(x=>x.id!==mid);closeModal();commit();return}
   m.status='pending';m.table=null;m.startedAt=null;closeModal();commit()}
