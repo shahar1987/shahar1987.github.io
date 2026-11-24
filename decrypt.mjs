@@ -1,10 +1,8 @@
-// שלב הבנייה ב-Render: מפענח את ttc.bin עם BUNDLE_KEY (משתנה סביבה פרטי) לתיקייה site/
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-import {webcrypto as c} from 'node:crypto';
-const buf=readFileSync('ttc.bin');
-const key=await c.subtle.importKey('raw',Buffer.from(process.env.BUNDLE_KEY,'base64'),'AES-GCM',false,['decrypt']);
-const plain=await c.subtle.decrypt({name:'AES-GCM',iv:buf.subarray(0,12)},key,buf.subarray(12));
-const {files}=JSON.parse(Buffer.from(plain).toString());
+// הכתובת ב-Render הועברה חזרה לכתובת המקורית של "תן לי שולחן"
+import {mkdirSync,writeFileSync} from 'node:fs';
+const to='https://shahar1987.github.io/ttc-mvh-tournaments/';
+const html=`<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>תן לי שולחן</title><meta http-equiv="refresh" content="0;url=${to}"><script>(async()=>{try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();for(const k of await caches.keys())await caches.delete(k)}catch(e){}location.replace('${to}'+location.search)})()</script><a href="${to}">תן לי שולחן</a></html>`;
+const sw=`self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())await caches.delete(k);await self.registration.unregister()})()));`;
 mkdirSync('site',{recursive:true});
-for(const [p,f] of Object.entries(files))writeFileSync('site/'+p,Buffer.from(f.b64,'base64'));
-console.log('ok',Object.keys(files).join(' '));
+writeFileSync('site/index.html',html);writeFileSync('site/sw.js',sw);
+console.log('redirect ->',to);
