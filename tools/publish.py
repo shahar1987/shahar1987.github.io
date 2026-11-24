@@ -5,7 +5,7 @@ with youth players' names shortened to first name + initial (same rule the board
 already uses on screen). Prints counts only, never names.
 Usage: python3 tools/publish.py <src_root>   (src_root/<repo>/ for each repo below)
 """
-import json, os, re, shutil, sys
+import json, os, re, shutil, subprocess, sys
 
 SITES = ["ttc-club-board", "ttc-uniform-sizes", "ttc-mvh-tournaments"]
 SKIP_DIRS = {".git", ".github", "e2e", "tools", "test", "tests", "node_modules", ".claude", "agents"}
@@ -35,6 +35,14 @@ def youth_map(board_dir):
     return m
 
 
+def src_version(s):
+    """Short commit of the source repo, so every publish gets a new version and open devices reload by themselves."""
+    try:
+        return subprocess.run(["git", "-C", s, "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:
+        return ""
+
+
 def main(src):
     youth = youth_map(os.path.join(src, "ttc-club-board"))
     names = sorted(youth, key=len, reverse=True)
@@ -43,6 +51,7 @@ def main(src):
         s, out = os.path.join(src, site), os.path.join(os.getcwd(), site)
         if not os.path.isdir(s):
             print(f"{site}: source missing, left as is"); continue
+        ver = src_version(s)
         shutil.rmtree(out, ignore_errors=True)
         for root, dirs, files in os.walk(s):
             dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
@@ -53,6 +62,8 @@ def main(src):
                 os.makedirs(os.path.dirname(b), exist_ok=True)
                 if f.endswith(TEXT):
                     t = open(a, encoding="utf-8", errors="surrogateescape").read()
+                    if ver and f == "index.html":
+                        t = re.sub(r"const APP_VER='[^']+'", "const APP_VER='" + ver + "'", t, count=1)
                     for n in names:
                         if n in t:
                             t = t.replace(n, youth[n]); changed += 1
