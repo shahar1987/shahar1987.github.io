@@ -7,8 +7,12 @@
 <title>תן לי שולחן — מועדון טניס שולחן מבואות החרמון</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1B2A41">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="./icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-title" content="תן לי שולחן">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="preconnect" href="https://www.gstatic.com">
@@ -171,7 +175,7 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--gut) + 4px) var(--gut) ca
 
 /* ============ groups ============ */
 .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px}
-.group{background:#fff;border:1px solid var(--edge);border-radius:var(--r-soft);overflow:hidden;box-shadow:var(--shadow-1)}
+.group{min-width:0;background:#fff;border:1px solid var(--edge);border-radius:var(--r-soft);overflow:hidden;box-shadow:var(--shadow-1)}
 .group header.gh{
   background:none;padding:13px 15px;color:var(--ink);
   display:flex;justify-content:space-between;align-items:center;gap:8px;
@@ -520,12 +524,29 @@ table.st th{font-size:max(.82em,13px)}
 .lg-row .sw{text-align:center;font-family:"Assistant",sans-serif;font-weight:800;font-size:22px;color:var(--act)}
 .lg-row.win .nm,.lg-row.win .sw{color:var(--ok)}
 .lg-tz{font-size:.85em;color:var(--ink-3)}
+@media (pointer:coarse){.lg-tz{font-size:16px}}
 .lg-teams{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .lg-col{gap:8px;min-width:0}
 .lg-pl{display:flex;gap:6px;align-items:flex-start}
 .lg-pl select{width:100%}
 .lt{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 4px;border-radius:8px;background:var(--act);color:#fff;font-family:"Assistant",sans-serif;font-weight:800;font-size:15px;margin-inline-end:6px;flex:0 0 auto}
 .lg-pl .lt{margin-top:7px;margin-inline-end:0}
+
+/* ---- אפליקציה בטלפון (אייפון ואנדרואיד) ---- */
+html,body{max-width:100%;overflow-x:clip}
+body{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button,.chip,.tab,.step{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media (pointer:coarse){input,select,textarea{font-size:max(16px,1em)}} /* אייפון לא עושה זום כשנוגעים בשדה */
+header{padding-left:max(var(--gut),env(safe-area-inset-left));padding-right:max(var(--gut),env(safe-area-inset-right))}
+main{padding-left:max(var(--gut),env(safe-area-inset-left));padding-right:max(var(--gut),env(safe-area-inset-right))}
+@media (max-width:400px){
+  .lg-row{grid-template-columns:minmax(0,1fr) repeat(5,minmax(30px,44px)) 28px;gap:4px}
+  .lg-row input{font-size:18px;padding:6px 0}
+  .brand .acts button.ghost{padding:8px 9px}
+}
+#btnInstall{display:none}
+#btnInstall.show{display:inline-flex}
+#btnInstall.show[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -534,6 +555,7 @@ table.st th{font-size:max(.82em,13px)}
     <div class="logo"><i></i><div class="logotext"><span class="appname">תן לי שולחן</span><span class="club" id="hdrName">מועדון טניס שולחן מבואות החרמון ע"ש רוני גלבוע</span></div></div>
     <div class="acts">
       <button id="syncBtn" class="ghost sync" onclick="diagnostics()" title="מצב השמירה"><span id="syncDot"></span><span id="syncTxt"></span></button>
+      <button class="ghost" id="btnInstall" onclick="installApp()">התקנה</button>
       <button class="ghost" id="btnList" onclick="closeTournament()">כל התחרויות</button>
       <button class="ghost" id="btnOut" onclick="FB.signOut()">יציאה</button>
     </div>
@@ -549,7 +571,7 @@ table.st th{font-size:max(.82em,13px)}
 /* ========================= STATE ========================= */
 const KEY='tenlishulchan.v1';
 // עדכון אוטומטי: מכשיר שמחזיק גרסה ישנה (אייקון במסך הבית, לשונית פתוחה) נטען מחדש לבד כשעולה גרסה חדשה, רק כשאין חלון פתוח
-const APP_VER='69c6619';
+const APP_VER='dc39f29';
 let verTag=null;
 // קודם בודקים רק את הכותרות (כמה בתים); את הדף כולו (230KB) מורידים רק כשהוא באמת השתנה
 function checkUpdate(){if(document.querySelector('#modal .modal'))return;fetch(location.pathname,{method:'HEAD',cache:'no-store'}).then(r=>{const tag=r.headers.get('etag')||r.headers.get('last-modified');if(tag&&tag===verTag)return;verTag=tag;fullCheck()}).catch(()=>{})}
@@ -631,7 +653,7 @@ function renderSteps(){
 function render(remote){
   if(S.phase==='setup'&&!remote)keepSetup();
   const app=document.getElementById('app');
-  document.getElementById('btnList').style.display=TID?'':'none';document.getElementById('btnOut').style.display=USER&&!TID?'':'none';document.getElementById('syncBtn').style.display=TID||syncErr?'':'none';document.querySelector('header').classList.toggle('has-steps',!!(USER&&PROFILE&&TID)&&sys()!=='league');
+  document.getElementById('btnList').style.display=TID?'':'none';document.getElementById('btnInstall').hidden=!!TID;document.getElementById('btnOut').style.display=USER&&!TID?'':'none';document.getElementById('syncBtn').style.display=TID||syncErr?'':'none';document.querySelector('header').classList.toggle('has-steps',!!(USER&&PROFILE&&TID)&&sys()!=='league');
   if((!window.FB||BOOTED)&&!TID){app.innerHTML='<p class="muted" style="text-align:center;margin-top:60px">טוען…</p>';return}
   if(VIEW){document.getElementById('steps').innerHTML='';document.getElementById('hdrName').textContent=S.settings.name||CLUB_NAME;return renderView(app)}
   if(!USER){document.getElementById('steps').innerHTML='';return renderLogin(app)}
@@ -1257,7 +1279,7 @@ function dashTab(){
     return `<button class="dash-g ${gm.length&&d===gm.length?'done':''}" style="--gc:${gcolor(g.id)}" onclick="S.tab='groups';commit()"><b>${esc(g.name)}</b><span class="tiny">${d}/${gm.length} משחקים${pl?` · ${pl} על שולחן`:''}${gm.length&&d===gm.length?' · ✓ הסתיים':''}</span><span class="bar"><i style="width:${gm.length?d/gm.length*100:0}%"></i></span></button>`}).join('')}</div>`;
   if(S.koBuilt){const sec=(lbl,f)=>{const ms=S.matches.filter(m=>m.stage==='ko'&&!m.bye&&f(m.bracket||''));if(!ms.length)return '';const d=ms.filter(m=>m.status==='done').length;const nx=ms.filter(m=>m.status!=='done').sort((a,b)=>a.koRound-b.koRound)[0];
       return `<button class="dash-g ${d===ms.length?'done':''}" style="--gc:var(--act)" onclick="S.tab='bracket';commit()"><b>${lbl}</b><span class="tiny">${d}/${ms.length} משחקים${nx?' · עכשיו: '+esc(koRoundName(nx)):' · ✓ הסתיים'}</span><span class="bar"><i style="width:${d/ms.length*100}%"></i></span></button>`};
-    prog=`<div class="section-h"><h2>התקדמות הנוקאאוט</h2><span class="tiny">לחיצה פותחת את העץ</span></div><div class="dash-prog" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">${sec('נוקאאוט עליון',b=>b==='main')}${sec('נוקאאוט תחתון',b=>b.startsWith('cons'))}</div>`}
+    prog=`<div class="section-h"><h2>התקדמות הנוקאאוט</h2><span class="tiny">לחיצה פותחת את העץ</span></div><div class="dash-prog" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))">${sec('נוקאאוט עליון',b=>b==='main')}${sec('נוקאאוט תחתון',b=>b.startsWith('cons'))}</div>`}
   return `<div class="dash-alerts" role="status" aria-live="polite">${al.join('')}</div>
   <div class="dash-kpis">${kpi(`${doneAll}/${allMs.length}`,'משחקים שהסתיימו')}${kpi(`${playing.length}/${S.tables.length}`,'שולחנות פעילים')}${kpi(pend.length,'משחקים בתור')}${kpi(avg?Math.round(avg/60000)+' דק׳':'—','משחק ממוצע')}${kpi(estimateFinish()||'—','סיום צפוי')}${kpi(active+(out?` <small class="tiny">(${out} יצאו)</small>`:''),'שחקנים בתחרות')}</div>
   ${prog}
@@ -1280,7 +1302,14 @@ function swissStack(){const q=queueOrder(Date.now());const w=swissWait();if(!q.l
   return `<div class="card" style="margin-bottom:12px"><h2 style="margin-bottom:8px">הבא בתור</h2>
   ${q.length?`<ul class="queue">${q.map((x,i)=>`<li ${x.busy?'style="opacity:.5"':''}><div class="who">${i===0&&!x.busy?'<b>הבא: </b>':''}${esc(sideName(x.m,1))} – ${esc(sideName(x.m,2))}<div class="why">${x.busy?'מחכה שאחד מהם יסיים':'לשולחן הפנוי הבא'}</div></div></li>`).join('')}</ul>`:''}
   ${w?`<div class="muted" style="margin-top:${q.length?8:0}px">${esc(w)}</div>`:''}</div>`}
-function tablesTab(){
+// "חדש" (המסגרת הצהובה) דולק 2 דקות בדיוק. נמדד גם לפי השעון של המכשיר הזה, כי שעון הטלפון יכול להיות שונה מהמכשיר שהעלה את המשחק,
+// ומתכבה בטיימר משלו — לא מחכה לרענון הכללי שהטלפון מקפיא כשהמסך כבוי
+const FRESH_MS=2*60000,seenAt={};let freshTimer=null;
+function isFresh(m,now){if(!m||!m.startedAt||m.status!=='playing')return false;if(!seenAt[m.id])seenAt[m.id]=now;return now-m.startedAt<FRESH_MS&&now-seenAt[m.id]<FRESH_MS}
+function freshLeft(now){let min=Infinity;for(const m of S.matches)if(isFresh(m,now))min=Math.min(min,FRESH_MS-Math.max(now-m.startedAt,now-seenAt[m.id]));return min}
+function scheduleFreshOff(){clearTimeout(freshTimer);const left=freshLeft(Date.now());if(left===Infinity)return;freshTimer=setTimeout(()=>{const b=document.getElementById('tabBody');if(b&&(S.phase==='live'||S.phase==='ko')&&(S.tab==='tables'||S.tab==='dash')&&document.activeElement?.id!=='tSearch')b.innerHTML=(S.tab==='dash'?dashTab:tablesTab)();else document.querySelectorAll('.table.fresh').forEach(e=>{e.classList.remove('fresh');e.querySelector('.new-tag')?.remove()})},Math.max(0,left)+250)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.querySelector('.table.fresh'))scheduleFreshOff()});
+function tablesTab(){setTimeout(scheduleFreshOff,0);
   const now=Date.now();const bo=S.koBuilt?S.settings.boKO:S.settings.boGroup;const avg=avgDuration(bo);
   const groupPhase=!S.koBuilt;
   const freeCount=S.tables.filter(t=>!t.matchId).length;
@@ -1297,15 +1326,15 @@ function tablesTab(){
   <div id="tSearchOut">${playerHits(tSearchQ)}</div>
   <div class="live-grid"><div class="lg-main">
   <div class="tables">${(()=>{
-    // משחקים שעלו ב-3 הדקות האחרונות קופצים לראש הרשימה (החדש ביותר ראשון), השאר לפי מספר שולחן
-    const st=t=>{const m=t.matchId&&S.matches.find(x=>x.id===t.matchId);return m&&m.startedAt&&now-m.startedAt<3*60000?m.startedAt:0};
+    // משחקים שעלו ב-2 הדקות האחרונות קופצים לראש הרשימה (החדש ביותר ראשון), השאר לפי מספר שולחן
+    const st=t=>{const m=t.matchId&&S.matches.find(x=>x.id===t.matchId);return m&&isFresh(m,now)?m.startedAt:0};
     return S.tables.slice().sort((a,b)=>(st(b)-st(a))||(a.n-b.n))})().map(t=>{
     const m=t.matchId?S.matches.find(x=>x.id===t.matchId):null;
     if(!m)return `<div class="table free" ondragover="event.preventDefault();this.classList.add('drop')" ondragleave="this.classList.remove('drop')" ondrop="this.classList.remove('drop');dropMatch(event,${Number(t.n)})">
       <div class="tnum"><span>שולחן ${esc(t.n)}</span>${groupPhase&&S.settings.model!=='pool'?`<button class="lock" onclick="lockTable(${Number(t.n)})">${t.lock?esc(G(t.lock)?.name||''):'🔓 פתוח לכולם'}</button>`:''}</div>
       <div class="free-lbl">פנוי</div><div class="meta"><span>${t.lock&&groupPhase?'ממתין למשחק מ'+esc(G(t.lock)?.name||''):'גררו משחק לכאן'}</span></div></div>`;
     const dur=now-m.startedAt;const stuck=dur>OVERDUE_MS;
-    const fresh=dur<3*60000;
+    const fresh=isFresh(m,now);
     return `<div class="table busy ${stuck?'stuck':''} ${fresh?'fresh':''}" onclick="openResult('${ja(m.id)}')">
       <div class="tnum"><span>שולחן ${esc(t.n)}</span><span>${esc(matchLabel(m))}</span></div>
       ${fresh?'<span class="new-tag">חדש · לקרוא לשחקנים</span>':''}
@@ -1500,7 +1529,7 @@ function finishPoint(m,score,side,quiet){
 
 /* ---------- Groups tab ---------- */
 function groupsTab(){
-  return `<div class="groups" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">${S.groups.map(g=>{
+  return `<div class="groups" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))">${S.groups.map(g=>{
     const r=rankGroup(g.id);const done=groupDone(g.id);const ms=S.matches.filter(m=>m.stage==='group'&&m.groupId===g.id);
     return `<div class="group" style="--gc:${gcolor(g.id)}"><header class="gh"><h3><i class="gdot"></i>${esc(g.name)}</h3><span class="tiny">${ms.filter(m=>m.status==='done').length}/${ms.length} משחקים${done?' · הסתיים':''}</span></header>
     <div style="padding:6px 8px;overflow-x:auto"><table class="st"><tr><th>#</th><th style="text-align:right">שם</th><th>מש׳</th><th>נצ׳</th><th>הפ׳</th><th>נק׳</th><th>מערכות</th><th>נקודות</th></tr>
@@ -2424,6 +2453,18 @@ function bootCached(){if(VIEW)return;try{const uid=localStorage.getItem(KEY+'.ui
 bootCached();
 render();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+// התקנה כאפליקציה: באנדרואיד חלון ההתקנה של כרום, באייפון הסבר קצר (ספארי לא מאפשר להתקין מתוך הדף)
+let installEvt=null;
+const STANDALONE=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function showInstall(on){const b=document.getElementById('btnInstall');if(b)b.classList.toggle('show',on&&!STANDALONE)}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;showInstall(true)});
+addEventListener('appinstalled',()=>{installEvt=null;showInstall(false)});
+if(IOS)showInstall(true);
+function installApp(){
+  if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;showInstall(false)});return}
+  modal(`<h2>התקנה באייפון</h2><ol style="line-height:2;padding-inline-start:22px;margin:14px 0"><li>לפתוח את הדף בספארי</li><li>ללחוץ על כפתור השיתוף <b>⎙</b></li><li>לבחור <b>הוספה למסך הבית</b></li></ol><button class="primary big" style="width:100%" onclick="closeModal()">הבנתי</button>`)
+}
 </script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
